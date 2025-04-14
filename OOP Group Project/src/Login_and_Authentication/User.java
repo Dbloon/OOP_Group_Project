@@ -6,12 +6,20 @@ public class User {
     private int failedAttempts;
     private static final int MAX_FAILED_ATTEMPTS = 3; // Lock threshold
 
-    public User(String username, String password, String role) {
+    public User(){
+        username = " ";
+        password = " ";
+        role = " ";
+        failedAttempts = 0;
+        isLocked = false;
+    }
+
+    public User(String username, String password, String role, int failedAttempts, boolean isLocked) {
         this.username = username;
         this.password = password;
-        this.isLocked = false;
         this.role = role;
-        this.failedAttempts = 0;
+        this.failedAttempts = failedAttempts;
+        this.isLocked = isLocked;
     }
 
     // Setters

@@ -5,19 +5,41 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class LoginManager {
-    public static User authenticate(String inputUsername, String inputPassword) {
+    public static User authenticate(String inputUsername, String inputPassword, int failedAttempts) {
+        String username = "";
+        String password = "";
+        String role = "";
+        int failedAttempt = 0;
+        boolean isLocked = false;
+
         String filePath = "Employees.dat"; // Use a binary file for random access
 
         try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")) {
             while (raf.getFilePointer() < raf.length()) {
-                String username = raf.readUTF().trim();
-                String password = raf.readUTF().trim();
-                String role = raf.readUTF().trim();
+                username = raf.readUTF().trim();
+                password = raf.readUTF().trim();
+                role = raf.readUTF().trim();
+                failedAttempt = raf.readInt();
+                isLocked = raf.readBoolean();
 
-                if (username.equals(inputUsername) && password.equals(inputPassword)) {
-                    User user = new User(username, password, role);
-                    SessionManager.setAuthenticatedUser(user);
-                    return user;
+                if (username.equals(inputUsername)){
+                    if(isLocked){
+                        System.out.println("Account is locked. Contact the administrator.");
+                        return null;
+                    }
+
+                    if(password.equals(inputPassword)){
+                        User user = new User(username, password, role,failedAttempts, false);
+                        SessionManager.setAuthenticatedUser(user);
+                        return user;
+                    }else{
+                        if(failedAttempts >= 3){
+                            isLocked = true;
+                            System.out.print("Account has been locked due to too many failed attempts");
+                            return null;
+                        }
+                    }
+
                 }
             }
         } catch (FileNotFoundException e) {
@@ -27,6 +49,7 @@ public class LoginManager {
         }
 
         System.out.println("Authentication Failed");
+
         return null;
     }
 }

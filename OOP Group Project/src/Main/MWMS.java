@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MWMS {
+    public static int failedAttempts = 0;
     public static void main(String[] args) {
         // Login Frame
         JFrame loginFrame = new JFrame("Login");
@@ -34,7 +35,7 @@ public class MWMS {
         panel.add(Box.createHorizontalStrut(68)); // Adds 10px horizontal space
 
         panel.add(Box.createVerticalStrut(10)); //Adds 10px vertical space
-        panel.add(new JLabel("\nPassword:"));
+        panel.add(new JLabel("Password:"));
         panel.add(passwordField);
 
         panel.add(Box.createVerticalStrut(10));
@@ -48,30 +49,21 @@ public class MWMS {
             String username = usernameField.getText().trim();
             String password = String.valueOf(passwordField.getPassword()).trim();
 
-            User attemptedUser = new User(username, password, "Unknown"); // Temporary user tracking
+            //User user = LoginManager.authenticate("Daren", "bryan");
+            User user = LoginManager.authenticate(username,password,failedAttempts);
 
-            //User authenticatedUser = Login_and_Authentication.LoginManager.authenticate(username, password);
-            //Login_and_Authentication.User authenticatedUser = LoginManager.authenticate("Daren", "bryan");
-            Login_and_Authentication.User authenticatedUser = LoginManager.authenticate("Joshua", "kal");
-
-            if (authenticatedUser != null) {
-                if (!authenticatedUser.isLocked()) {
-                    JOptionPane.showMessageDialog(loginFrame, "Welcome " + authenticatedUser.getUsername() + "!");
-                    loginFrame.dispose(); // Close login frame
-                    SessionManager.setAuthenticatedUser(authenticatedUser); // Store authenticated user
-                    Dashboard.open(); // Open role-based dashboard
-                } else {
-                    JOptionPane.showMessageDialog(loginFrame, "Account is locked.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-                }
+            if (user != null) {
+                JOptionPane.showMessageDialog(loginFrame, "Welcome " + user.getUsername() + "!");
+                loginFrame.dispose(); // Close login frame
+                Dashboard.open(); // Open role-based dashboard
             } else {
-                attemptedUser.incrementFailedAttempts();
-
-                if (attemptedUser.getFailedAttempts() >= 3) {
-                    attemptedUser.setLocked(true);
-                    JOptionPane.showMessageDialog(loginFrame, "Account locked due to multiple failed attempts.", "Login Failed", JOptionPane.ERROR_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(loginFrame, "Invalid credentials!", "Login Failed", JOptionPane.ERROR_MESSAGE);
+                failedAttempts++;
+                if(failedAttempts > 3){
+                    JOptionPane.showMessageDialog(loginFrame,"Account Locked, consult an Admin");
+                    failedAttempts = 0;
+                    System.exit(1  );
                 }
+                JOptionPane.showMessageDialog(loginFrame, "Login Failed.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
         });
     }

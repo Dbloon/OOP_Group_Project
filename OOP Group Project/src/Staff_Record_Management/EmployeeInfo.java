@@ -255,7 +255,7 @@ public class EmployeeInfo {
         Emp.setVisible(true);
     }
 
-    public static void addEmployee(String firstname,String password, String role) {
+    public static void addEmployee(String firstname,String password, String role, int failedAttemts, boolean isLocked) {
         String filePath = "Employees.dat";
 
         try (RandomAccessFile raf = new RandomAccessFile(filePath, "rw")) {
@@ -263,6 +263,8 @@ public class EmployeeInfo {
             raf.writeUTF(firstname);
             raf.writeUTF(password);
             raf.writeUTF(role);
+            raf.writeInt(failedAttemts);
+            raf.writeBoolean(isLocked);
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
         }
@@ -350,7 +352,7 @@ public class EmployeeInfo {
     }
 
     public static void main(String[] args){
-        addEmployee("Joshua","kal","doctor");
+        addEmployee("Daren","bryan","admin",0,false);
     }
 }
 
