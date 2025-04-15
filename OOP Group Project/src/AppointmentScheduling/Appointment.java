@@ -12,7 +12,7 @@ import Visit_Referral_Management.Date;
 
 import javax.swing.*;
 
-class Appointment {
+public class Appointment {
     Scanner scanner = new Scanner(System.in);
     private static final int MAX_APPOINTMENTS = 3;
     private static final int recordSize = 58; 
@@ -152,6 +152,10 @@ class Appointment {
         updateStatusButton.addActionListener(e -> modifyAppointment('U'));
         cancelAppointmentButton.addActionListener(e -> modifyAppointment('C'));
         scheduleAppointmentButton.addActionListener(e -> setAppointment());
+        returnToDashboardButton.addActionListener(e -> {
+            frame.dispose();
+            doctorDashboard();
+        });
 
         buttonPanel.add(updateStatusButton);
         buttonPanel.add(cancelAppointmentButton);
@@ -162,8 +166,6 @@ class Appointment {
         frame.add(buttonPanel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
-
-
     /*public void ManageAppointments() {
         char option;
         viewAppointments();
@@ -479,94 +481,88 @@ class Appointment {
         patientFrame.setVisible(true);
     }
 
-    import javax.swing.*;
-import java.awt.*;
-import java.io.RandomAccessFile;
-import java.io.IOException;
-import java.time.LocalTime;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+    public void generateAppointmentTimes() {
+        JFrame frame = new JFrame("Generate Appointment Times");
+        frame.setSize(500, 300);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
 
-    public class AppointmentScheduler {
-        public void generateAppointmentTimes() {
-            JFrame frame = new JFrame("Generate Appointment Times");
-            frame.setSize(500, 300);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setLayout(new BorderLayout());
+        JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
+        JLabel startTimeLabel = new JLabel("Start Time (HH 24-hour format):");
+        JTextField startTimeField = new JTextField();
+        JLabel endTimeLabel = new JLabel("End Time (HH 24-hour format):");
+        JTextField endTimeField = new JTextField();
+        JLabel dateLabel = new JLabel("Date (DD-MM-YYYY):");
+        JTextField dateField = new JTextField();
+        JButton generateButton = new JButton("Generate Slots");
+        JButton returnToDashboardButton  = new JButton("Return to Dashboard");
 
-            JPanel inputPanel = new JPanel(new GridLayout(4, 2, 10, 10));
-            JLabel startTimeLabel = new JLabel("Start Time (HH 24-hour format):");
-            JTextField startTimeField = new JTextField();
-            JLabel endTimeLabel = new JLabel("End Time (HH 24-hour format):");
-            JTextField endTimeField = new JTextField();
-            JLabel dateLabel = new JLabel("Date (DD-MM-YYYY):");
-            JTextField dateField = new JTextField();
-            JButton generateButton = new JButton("Generate Slots");
+        returnToDashboardButton.addActionListener(e -> {
+            frame.dispose();
+            doctorDashboard();
+        });
 
-            inputPanel.add(startTimeLabel);
-            inputPanel.add(startTimeField);
-            inputPanel.add(endTimeLabel);
-            inputPanel.add(endTimeField);
-            inputPanel.add(dateLabel);
-            inputPanel.add(dateField);
-            inputPanel.add(generateButton);
+        inputPanel.add(startTimeLabel);
+        inputPanel.add(startTimeField);
+        inputPanel.add(endTimeLabel);
+        inputPanel.add(endTimeField);
+        inputPanel.add(dateLabel);
+        inputPanel.add(dateField);
+        inputPanel.add(generateButton);
+        inputPanel.add(returnToDashboardButton);
 
-            JTextArea statusArea = new JTextArea();
-            statusArea.setEditable(false);
+        JTextArea statusArea = new JTextArea();
+        statusArea.setEditable(false);
 
-            generateButton.addActionListener(e -> {
-                try {
-                    int startHour = Integer.parseInt(startTimeField.getText());
-                    int endHour = Integer.parseInt(endTimeField.getText());
-                    String[] dateParts = dateField.getText().split("-");
-                    int day = Integer.parseInt(dateParts[0]);
-                    int month = Integer.parseInt(dateParts[1]);
-                    int year = Integer.parseInt(dateParts[2]);
+        generateButton.addActionListener(e -> {
+            try {
+                int startHour = Integer.parseInt(startTimeField.getText());
+                int endHour = Integer.parseInt(endTimeField.getText());
+                String[] dateParts = dateField.getText().split("-");
+                int day = Integer.parseInt(dateParts[0]);
+                int month = Integer.parseInt(dateParts[1]);
+                int year = Integer.parseInt(dateParts[2]);
 
-                    if (startHour >= endHour) {
-                        statusArea.setText("Start time must be less than end time. Please try again.");
-                        return;
-                    }
-
-                    Date date = new Date(year, month, day);
-                    RandomAccessFile pen = new RandomAccessFile("appointment_times.txt", "rw");
-
-                    StringBuilder timeSlotsDisplay = new StringBuilder("Generated Time Slots:\n");
-                    LocalTime[][] timeSlots = new LocalTime[MAX_APPOINTMENTS][2];
-                    int slotIndex = 0;
-
-                    for (LocalTime time = LocalTime.of(startHour, 0); time.plusMinutes(30).isBefore(LocalTime.of(endHour, 0))
-                            && slotIndex < MAX_APPOINTMENTS; time = time.plusMinutes(30)) {
-                        LocalTime endTimeSlot = time.plusMinutes(30);
-                        timeSlotsDisplay.append(time).append(" - ").append(endTimeSlot).append("\n");
-                        timeSlots[slotIndex][0] = time;
-                        timeSlots[slotIndex][1] = endTimeSlot;
-                        slotIndex++;
-                    }
-
-                    statusArea.setText(timeSlotsDisplay.toString());
-
-                    for (int appt = 1; appt <= MAX_APPOINTMENTS; appt++) {
-                        pen.seek((appt - 1) * recordSize);
-                        pen.writeInt(appt);
-                        pen.writeChars(new SimpleDateFormat("dd-MM-yyyy").format(date));
-                        pen.writeInt(timeSlots[appt - 1][0].getHour());
-                        pen.writeInt(timeSlots[appt - 1][1].getHour());
-                    }
-
-                    pen.close();
-                } catch (IOException | NumberFormatException ex) {
-                    statusArea.setText("An error occurred while generating appointments.");
+                if (startHour >= endHour) {
+                    statusArea.setText("Start time must be less than end time. Please try again.");
+                    return;
                 }
-            });
 
-            frame.add(inputPanel, BorderLayout.NORTH);
-            frame.add(new JScrollPane(statusArea), BorderLayout.CENTER);
-            frame.setVisible(true);
-        }
+                Date date = new Date(year, month, day);
+                RandomAccessFile pen = new RandomAccessFile("appointment_times.txt", "rw");
+
+                StringBuilder timeSlotsDisplay = new StringBuilder("Generated Time Slots:\n");
+                LocalTime[][] timeSlots = new LocalTime[MAX_APPOINTMENTS][2];
+                int slotIndex = 0;
+
+                for (LocalTime time = LocalTime.of(startHour, 0); time.plusMinutes(30).isBefore(LocalTime.of(endHour, 0))
+                        && slotIndex < MAX_APPOINTMENTS; time = time.plusMinutes(30)) {
+                    LocalTime endTimeSlot = time.plusMinutes(30);
+                    timeSlotsDisplay.append(time).append(" - ").append(endTimeSlot).append("\n");
+                    timeSlots[slotIndex][0] = time;
+                    timeSlots[slotIndex][1] = endTimeSlot;
+                    slotIndex++;
+                }
+
+                statusArea.setText(timeSlotsDisplay.toString());
+
+                for (int appt = 1; appt <= MAX_APPOINTMENTS; appt++) {
+                    pen.seek((appt - 1) * recordSize);
+                    pen.writeInt(appt);
+                    pen.writeChars(new SimpleDateFormat("dd-MM-yyyy").format(date));
+                    pen.writeInt(timeSlots[appt - 1][0].getHour());
+                    pen.writeInt(timeSlots[appt - 1][1].getHour());
+                }
+                pen.close();
+            } catch (IOException | NumberFormatException ex) {
+                statusArea.setText("An error occurred while generating appointments.");
+            }
+        });
+
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(new JScrollPane(statusArea), BorderLayout.CENTER);
+        frame.setVisible(true);
     }
-
-
     /*public void generateAppointmentTimes()  {
         Appointment appointment = new Appointment();
         RandomAccessFile pen = null;
@@ -658,9 +654,6 @@ import java.util.Date;
                 System.out.println("Time: " + startTime + " - " + endTimeSlot);
                 System.out.println("------------------------------------------------");
             }
-        } catch (IOException e) {
-            System.out.println(e);
-
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -737,7 +730,7 @@ import java.util.Date;
 
 
 
-    public static void main(String[] args) {
+    public static void main() {
         Appointment appt = new Appointment();
         appt.start();
     }

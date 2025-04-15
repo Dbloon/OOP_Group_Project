@@ -6,6 +6,7 @@ import Login_and_Authentication.User;
 import Staff_Record_Management.EmployeeInfo;
 import Staff_Record_Management.ManageUsers;
 import Visit_Referral_Management.AddVisit;
+import AppointmentScheduling.Appointment;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,7 +48,14 @@ public class Dashboard {
         JButton addVisitButton = new JButton("Add New Visit");
         addVisitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addVisitButton.addActionListener(e -> {
+            dashboardFrame.setVisible(false);
             AddVisit.open();
+        });
+
+        JButton AppointmentScheduling = new JButton("Appointment Scheduling");
+        AppointmentScheduling.addActionListener(e -> {
+            dashboardFrame.setVisible(false);
+            Appointment.main();
         });
 
         // Role-Based Options
@@ -59,9 +67,7 @@ public class Dashboard {
                 break;
             case "doctor":
                 panel.add(addVisitButton);
-                panel.add(new JButton("View Appointments"));
-                panel.add(new JButton("View Patient_Management.Patient Records"));
-                panel.add(new JButton("Prescriptions"));
+                panel.add(AppointmentScheduling);
                 panel.add(logoutButton);;
                 break;
             case "nurse":
