@@ -97,7 +97,7 @@ public class Appointment {
 
     public void displayAppointment() {
         JFrame appointmentFrame = new JFrame("View Appointment");
-        appointmentFrame.setSize(500, 300);
+        appointmentFrame.setSize(500, 500);
         appointmentFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         appointmentFrame.setLayout(new BorderLayout());
 
@@ -157,7 +157,10 @@ public class Appointment {
 
         updateStatusButton.addActionListener(e -> modifyAppointment('U'));
         cancelAppointmentButton.addActionListener(e -> modifyAppointment('C'));
-        scheduleAppointmentButton.addActionListener(e -> setAppointment());
+        scheduleAppointmentButton.addActionListener(e -> {
+            frame.setVisible(false);
+            setAppointment();
+        });
         returnToDashboardButton.addActionListener(e -> {
             frame.dispose();
             doctorDashboard();
@@ -203,7 +206,7 @@ public class Appointment {
 
     public void setAppointment() {
         JFrame frame = new JFrame("Set Appointment");
-        frame.setSize(500, 300);
+        frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -211,16 +214,16 @@ public class Appointment {
         JLabel label = new JLabel("Enter Appointment Number:");
         JTextField appointmentNumberField = new JTextField(10);
         JButton submitButton = new JButton("Schedule");
-        JButton returnToMenuButton = new JButton("Return to Menu");
+        JButton returnToMenuButton = new JButton("Return to Appointment Menu");
         returnToMenuButton.addActionListener(e -> {
             frame.dispose();
-            patientDashboard();
+            main();
         });
 
         inputPanel.add(label);
         inputPanel.add(appointmentNumberField);
         inputPanel.add(submitButton);
-        inputPanel.add(returnToMenuButton);
+        inputPanel.add(returnToMenuButton,BorderLayout.EAST);
 
         JTextArea statusArea = new JTextArea();
         statusArea.setEditable(false);
@@ -298,7 +301,7 @@ public class Appointment {
 
     public void modifyAppointment(char choice) {
         JFrame frame = new JFrame("Modify Appointment");
-        frame.setSize(700, 300);
+        frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -310,7 +313,7 @@ public class Appointment {
         JButton returnToMenuButton = new JButton("Return to Menu");
         returnToMenuButton.addActionListener(e -> {
             frame.dispose();
-            patientDashboard();
+            doctorDashboard();
         });
 
         JButton submitButton;
@@ -358,6 +361,7 @@ public class Appointment {
             }
         });
 
+        inputPanel.add(returnToMenuButton,BorderLayout.EAST);
         frame.add(inputPanel, BorderLayout.NORTH);
         frame.add(new JScrollPane(statusArea), BorderLayout.CENTER);
         frame.setVisible(true);
@@ -410,7 +414,7 @@ public class Appointment {
 
     public void doctorDashboard() {
         JFrame frame = new JFrame("Doctor Dashboard");
-        frame.setSize(500, 300);
+        frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -423,8 +427,14 @@ public class Appointment {
         JButton manageAppointmentsButton = new JButton("Manage Appointments");
         JButton returnToAppointmentButton = new JButton("Return to Appointment Menu");
 
-        generateAppointmentsButton.addActionListener(e -> generateAppointmentTimes());
-        manageAppointmentsButton.addActionListener(e -> ManageAppointments());
+        generateAppointmentsButton.addActionListener(e -> {
+            frame.setVisible(false);
+            generateAppointmentTimes();
+        });
+        manageAppointmentsButton.addActionListener(e -> {
+            frame.setVisible(false);
+            ManageAppointments();
+        });
         returnToAppointmentButton.addActionListener(e -> {
             frame.dispose();
             start();
@@ -438,7 +448,6 @@ public class Appointment {
         frame.add(buttonPanel, BorderLayout.CENTER);
         frame.setVisible(true);
     }
-
     /*public void doctorDashboard() {
         while (true) { // needs to throw exception
             System.out.println("\nDoctor Dashboard");
@@ -466,7 +475,7 @@ public class Appointment {
 
     public void patientDashboard() {
         JFrame patientFrame = new JFrame("Patient Dashboard");
-        patientFrame.setSize(500, 400);
+        patientFrame.setSize(600, 500);
         patientFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         patientFrame.setLayout(new BorderLayout());
 
@@ -508,7 +517,7 @@ public class Appointment {
 
     public void generateAppointmentTimes() {
         JFrame frame = new JFrame("Generate Appointment Times");
-        frame.setSize(500, 300);
+        frame.setSize(600, 600);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
@@ -717,7 +726,7 @@ public class Appointment {
 
     public void start() {
         JFrame appointmentFrame = new JFrame("Schedule Appointment");
-        appointmentFrame.setSize(700, 800);
+        appointmentFrame.setSize(600, 600);
         appointmentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel(new BorderLayout());

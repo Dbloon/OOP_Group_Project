@@ -1,13 +1,16 @@
 package Visit_Referral_Management;
 
-//import java.util.Date;
-
 import Dashboardpak.Dashboard;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 public class Visit {
+    private static final String FILE_NAME = "Visits.dat";
+    private static final int RECORD_SIZE = 2048;
+
     private int visitNumber;
     private int patientNumber;
     private int doctorNumber;
@@ -103,4 +106,55 @@ public class Visit {
         this.doctorNotes = doctorNotes;
     }
 
+    // Write a Visit object at a specific position based on patient number
+    public void writeVisit(int position, Visit visit) {
+        try (RandomAccessFile raf = new RandomAccessFile(FILE_NAME, "rw")) {
+            raf.seek((long) position * RECORD_SIZE); // Navigate to specific record
+            raf.writeInt(visit.getPatientNumber());
+            raf.writeInt(visit.getVisitNumber());
+            raf.writeInt(visit.getDoctorNumber());
+            raf.writeInt(visit.getVisitDate().getDay());
+            raf.writeInt(visit.getVisitDate().getMonth());
+            raf.writeInt(visit.getVisitDate().getYear());
+            raf.writeUTF(visit.getPurposeOfVisit());
+            raf.writeUTF(visit.getDiagnosis());
+            raf.writeUTF(visit.getTreatment());
+            raf.writeUTF(visit.getDoctorNotes());
+        } catch (IOException e) {
+            System.out.println("Exception Caught");
+            e.printStackTrace();
+        }
+    }
+
+    // Read a specific Visit object based on position
+    public Visit readVisit(int position) {
+        Visit visit = null;
+        try (RandomAccessFile file = new RandomAccessFile(FILE_NAME, "r")) {
+            file.seek(position * RECORD_SIZE); // Navigate to specific record
+            int patientNumber = file.readInt();
+            int visitNumber = file.readInt();
+            int doctorNumber = file.readInt();
+            int visitDay = file.readInt();
+            int visitMonth = file.readInt();
+            int visitYear = file.readInt();
+            String purposeOfVisit = file.readUTF();
+            String diagnosis = file.readUTF();
+            String treatment = file.readUTF();
+            String doctorNotes = file.readUTF();
+
+            visit = new Visit(
+                    visitNumber,
+                    patientNumber,
+                    doctorNumber,
+                    new Date(visitDay,visitMonth,visitYear),
+                    purposeOfVisit,
+                    diagnosis,
+                    treatment,
+                    doctorNotes
+            );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return visit;
+    }
 }
