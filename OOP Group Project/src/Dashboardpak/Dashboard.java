@@ -3,6 +3,7 @@ package Dashboardpak;
 import Main.MWMS;
 import Login_and_Authentication.SessionManager;
 import Login_and_Authentication.User;
+import Patient_and_Medication_Management.Prescription_and_Medication;
 import Staff_Record_Management.EmployeeInfo;
 import Staff_Record_Management.ManageUsers;
 import Visit_Referral_Management.AddVisit;
@@ -19,7 +20,7 @@ public class Dashboard {
             return; // Prevent opening dashboard without a user
         }
 
-        JFrame dashboardFrame = new JFrame("Main.MWMS Menu - " + user.getRole());
+        JFrame dashboardFrame = new JFrame("Prescription_and_Medication.MWMS Menu - " + user.getRole());
         dashboardFrame.setSize(600, 400);
         dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -58,6 +59,12 @@ public class Dashboard {
             Appointment.main();
         });
 
+        JButton ManageMedication = new JButton("Manage Medication");
+        ManageMedication.addActionListener(e ->{
+            dashboardFrame.setVisible(false);
+            Prescription_and_Medication.main();
+        });
+
         // Role-Based Options
         switch (user.getRole().toLowerCase()) {
             case "admin":
@@ -68,11 +75,12 @@ public class Dashboard {
             case "doctor":
                 panel.add(addVisitButton);
                 panel.add(AppointmentScheduling);
+                panel.add(ManageMedication);
                 panel.add(logoutButton);;
                 break;
             case "nurse":
                 panel.add(new JButton("Assist with Patient_Management.Patient Records"));
-                panel.add(new JButton("Manage Medications"));
+                panel.add(ManageMedication);
                 panel.add(logoutButton);
                 break;
             case "patient":

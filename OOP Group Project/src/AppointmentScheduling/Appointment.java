@@ -453,7 +453,7 @@ public class Appointment {
             System.out.println("\nDoctor Dashboard");
             System.out.println("1. Generate AppointmentScheduling.Appointment Times");
             System.out.println("2. Manage Appointments");
-            System.out.println("3. Return to Main Menu");
+            System.out.println("3. Return to Prescription_and_Medication Menu");
             System.out.print("Choose an option: ");
             int choice = scanner.nextInt();
             scanner.nextLine();
