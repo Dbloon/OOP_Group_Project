@@ -1,5 +1,7 @@
 package Patient_and_Medication_Management;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.Scanner;
 
@@ -35,7 +37,7 @@ public class PatientRecords {
 		this.address = address;
 	}
 	
-	public void initiallizeRec() {
+	public void initializeRec() {
 		
 		try {
 			RandomAccessFile OUT = new RandomAccessFile("PatientData.txt", "rw");
@@ -170,33 +172,74 @@ public class PatientRecords {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void displayRecords(int pid) {
-		
+		JFrame frame = new JFrame("Patient Record Viewer");
+		frame.setSize(600, 400);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setLayout(new BorderLayout());
+
+		JTextArea recordsArea = new JTextArea();
+		recordsArea.setEditable(false);
+
 		try {
 			RandomAccessFile OUT = new RandomAccessFile("PatientData.txt", "r");
 
-			
+			long filePointerPosition = pid - 1;
+			OUT.seek(filePointerPosition * sizeOfRecord);
+
+			int patientNumber = OUT.readInt();
+			String patientName = OUT.readUTF();
+			String patientDob = OUT.readUTF();
+			String gender = OUT.readUTF();
+			int phoneNumber = OUT.readInt();
+			String address = OUT.readUTF();
+
+			StringBuilder details = new StringBuilder();
+			details.append("Patient ID#: ").append(patientNumber).append("\n");
+			details.append("Patient Name: ").append(patientName).append("\n");
+			details.append("Date of Birth: ").append(patientDob).append("\n");
+			details.append("Gender: ").append(gender).append("\n");
+			details.append("Phone Number: ").append(phoneNumber).append("\n");
+			details.append("Address: ").append(address).append("\n");
+
+			recordsArea.setText(details.toString());
+
+			OUT.close();
+		} catch (IOException e) {
+			recordsArea.setText("An error occurred while retrieving patient records.");
+		}
+
+		JScrollPane scrollPane = new JScrollPane(recordsArea);
+		frame.add(scrollPane, BorderLayout.CENTER);
+		frame.setVisible(true);
+	}
+	/*public void displayRecords(int pid) {
+
+		try {
+			RandomAccessFile OUT = new RandomAccessFile("PatientData.txt", "r");
+
+
 			filePointerPosition = pid - 1;
 			OUT.seek((long) filePointerPosition * sizeOfRecord);
-			
+
 			patientNumber = OUT.readInt();
 			patientName = OUT.readUTF();
 			patientDob = OUT.readUTF();
 			gender = OUT.readUTF();
 			phoneNumber = OUT.readInt();
 			address = OUT.readUTF();
-			
+
 			display();
 			OUT.close();
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-	}
+
+
+	}*/
 
 	void display() {
 		System.out.println("\tPatientRecords \n"

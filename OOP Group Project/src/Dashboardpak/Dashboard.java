@@ -62,7 +62,7 @@ public class Dashboard {
         JButton ManageMedication = new JButton("Manage Medication");
         ManageMedication.addActionListener(e ->{
             dashboardFrame.setVisible(false);
-            Prescription_and_Medication.main();
+            Prescription_and_Medication.MedicalHistory();
         });
 
         // Role-Based Options

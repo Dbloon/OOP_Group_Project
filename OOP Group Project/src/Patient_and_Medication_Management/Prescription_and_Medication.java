@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class Prescription_and_Medication {
 
-	public static void main() {
+	public static void MedicalHistory() {
 		JFrame frame = new JFrame("Patient Records Management");
 		frame.setSize(500, 300);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -34,7 +34,7 @@ public class Prescription_and_Medication {
 			try {
 				int patientID = Integer.parseInt(patientIdField.getText());
 				Prescription precs = new Prescription();
-				precs.medicationHistory();
+				//precs.medicationHistory();
 				precs.viewMedicationHistory(patientID);
 				outputArea.setText("Displaying medication history for Patient ID: " + patientID);
 			} catch (NumberFormatException ex) {

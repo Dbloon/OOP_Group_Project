@@ -49,7 +49,7 @@ public class Prescription {
 		this.prescriptionDate = prescriptionDate;
 	}
 
-	public void medicationHistory() {
+	public void saveMedicationHistory() {
 		JFrame frame = new JFrame("Medication History");
 		frame.setSize(500, 300);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
