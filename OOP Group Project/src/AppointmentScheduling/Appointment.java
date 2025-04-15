@@ -102,6 +102,11 @@ public class Appointment {
         appointmentFrame.setLayout(new BorderLayout());
 
         JTextArea appointmentDetails = new JTextArea();
+        JButton close = new JButton("Close");
+        close.addActionListener(e -> {
+            appointmentFrame.dispose();
+        });
+
         appointmentDetails.setEditable(false);
 
         RandomAccessFile pen = null;
@@ -129,6 +134,7 @@ public class Appointment {
             System.out.println("An Exception occured");
         }
         JScrollPane scrollPane = new JScrollPane(appointmentDetails);
+        appointmentFrame.add(close,BorderLayout.SOUTH);
         appointmentFrame.add(scrollPane, BorderLayout.CENTER);
         appointmentFrame.setVisible(true);
     }
@@ -205,10 +211,16 @@ public class Appointment {
         JLabel label = new JLabel("Enter Appointment Number:");
         JTextField appointmentNumberField = new JTextField(10);
         JButton submitButton = new JButton("Schedule");
+        JButton returnToMenuButton = new JButton("Return to Menu");
+        returnToMenuButton.addActionListener(e -> {
+            frame.dispose();
+            patientDashboard();
+        });
 
         inputPanel.add(label);
         inputPanel.add(appointmentNumberField);
         inputPanel.add(submitButton);
+        inputPanel.add(returnToMenuButton);
 
         JTextArea statusArea = new JTextArea();
         statusArea.setEditable(false);
@@ -295,6 +307,11 @@ public class Appointment {
         JTextField appointmentNumberField = new JTextField(10);
         JLabel statusLabel = new JLabel("Enter New Status (if updating):");
         JTextField statusField = new JTextField(10);
+        JButton returnToMenuButton = new JButton("Return to Menu");
+        returnToMenuButton.addActionListener(e -> {
+            frame.dispose();
+            patientDashboard();
+        });
 
         JButton submitButton;
         if (choice == 'U') {
@@ -463,9 +480,17 @@ public class Appointment {
         JButton cancelAppointmentButton = new JButton("Modify Appointment");
         JButton returnToAppointmentMenuButton = new JButton("Return to Appointment Menu");
 
-        bookAppointmentButton.addActionListener(e -> setAppointment());
-        viewAppointmentsButton.addActionListener(e -> displayAppointment());
-        cancelAppointmentButton.addActionListener(e -> modifyAppointment('C'));
+        bookAppointmentButton.addActionListener(e -> {
+            patientFrame.setVisible(false);
+            setAppointment();
+        });
+        viewAppointmentsButton.addActionListener(e -> {
+            displayAppointment();
+        });
+        cancelAppointmentButton.addActionListener(e -> {
+            patientFrame.setVisible(false);
+            modifyAppointment('C');
+        });
         returnToAppointmentMenuButton.addActionListener(e -> {
             patientFrame.dispose();
             start();
