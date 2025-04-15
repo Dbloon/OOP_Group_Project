@@ -141,6 +141,7 @@ class Appointment {
         System.out.println("3)To Schedule appointment");
         int choice = scanner.nextInt();
         do {
+
             switch (choice) {
                 case 1:
                     option = 'U'; // U for update
@@ -251,6 +252,67 @@ class Appointment {
     }
 
     public void modifyAppointment(char choice) {
+        JFrame frame = new JFrame("Modify Appointment");
+        frame.setSize(700, 300);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+
+        JPanel inputPanel = new JPanel();
+        JLabel label = new JLabel("Enter Appointment Number:");
+        JTextField appointmentNumberField = new JTextField(10);
+        JLabel statusLabel = new JLabel("Enter New Status (if updating):");
+        JTextField statusField = new JTextField(10);
+
+        JButton submitButton;
+        if (choice == 'U') {
+            submitButton = new JButton("Update");
+        } else {
+            submitButton = new JButton("Cancel");
+        }
+
+        inputPanel.add(label);
+        inputPanel.add(appointmentNumberField);
+        if (choice == 'U') {
+            inputPanel.add(statusLabel);
+            inputPanel.add(statusField);
+        }
+        inputPanel.add(submitButton);
+
+        JTextArea statusArea = new JTextArea();
+        statusArea.setEditable(false);
+
+        submitButton.addActionListener(e -> {
+            boolean found = false;
+            int apptNumber = Integer.parseInt(appointmentNumberField.getText());
+            String newStatus = choice == 'U' ? statusField.getText() : "Cancelled";
+
+            try {
+                RandomAccessFile pen = new RandomAccessFile("appointment_times.txt", "rw");
+                pen.seek((long) (apptNumber - 1) * recordSize);
+                if (pen.readInt() == apptNumber) {
+                    found = true;
+                } else {
+                    statusArea.setText("No appointment found.");
+                }
+
+                if (found) {
+                    pen.seek(5 + (long) (apptNumber - 1) * recordSize);
+                    setStatus(newStatus);
+                    pen.writeChars(choice == 'U' ? String.format("%-9s", newStatus) : " ");
+                    statusArea.setText(choice == 'U' ? "Appointment status updated successfully!" : "Appointment cancelled successfully!");
+                }
+
+                pen.close();
+            } catch (IOException ex) {
+                statusArea.setText("An error occurred while modifying the appointment.");
+            }
+        });
+
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(new JScrollPane(statusArea), BorderLayout.CENTER);
+        frame.setVisible(true);
+    }
+    /*public void modifyAppointment(char choice) {
         viewAppointments();
         RandomAccessFile pen = null;
         boolean found = false;
@@ -294,9 +356,40 @@ class Appointment {
         } catch (IOException e) {
             System.out.println(e);
         }
-    }
+    }*/
 
     public void doctorDashboard() {
+        JFrame frame = new JFrame("Doctor Dashboard");
+        frame.setSize(500, 300);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("Doctor Dashboard", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 10, 10));
+
+        JButton generateAppointmentsButton = new JButton("Generate Appointment Times");
+        JButton manageAppointmentsButton = new JButton("Manage Appointments");
+        JButton returnToAppointmentButton = new JButton("Return to Appointment Menu");
+
+        generateAppointmentsButton.addActionListener(e -> generateAppointmentTimes());
+        manageAppointmentsButton.addActionListener(e -> ManageAppointments());
+        returnToAppointmentButton.addActionListener(e -> {
+            frame.dispose();
+            start();
+        });
+
+        buttonPanel.add(generateAppointmentsButton);
+        buttonPanel.add(manageAppointmentsButton);
+        buttonPanel.add(returnToAppointmentButton);
+
+        frame.add(titleLabel, BorderLayout.NORTH);
+        frame.add(buttonPanel, BorderLayout.CENTER);
+        frame.setVisible(true);
+    }
+
+    /*public void doctorDashboard() {
         while (true) { // needs to throw exception
             System.out.println("\nDoctor Dashboard");
             System.out.println("1. Generate AppointmentScheduling.Appointment Times");
@@ -319,7 +412,7 @@ class Appointment {
                     System.out.println("Invalid choice. Try again.");
             }
         }
-    }
+    }*/
 
     public void patientDashboard() {
         JFrame patientFrame = new JFrame("Patient Dashboard");
@@ -334,13 +427,13 @@ class Appointment {
 
         JButton bookAppointmentButton = new JButton("Book Appointment");
         JButton viewAppointmentsButton = new JButton("View Appointments");
-        JButton cancelAppointmentButton = new JButton("Cancel Appointment");
-        JButton exitButton = new JButton("Return to Menu");
+        JButton cancelAppointmentButton = new JButton("Modify Appointment");
+        JButton returnToAppointmentMenuButton = new JButton("Return to Appointment Menu");
 
         bookAppointmentButton.addActionListener(e -> setAppointment());
         viewAppointmentsButton.addActionListener(e -> displayAppointment());
         cancelAppointmentButton.addActionListener(e -> modifyAppointment('C'));
-        exitButton.addActionListener(e -> {
+        returnToAppointmentMenuButton.addActionListener(e -> {
             patientFrame.dispose();
             start();
         });
@@ -348,7 +441,7 @@ class Appointment {
         buttonPanel.add(bookAppointmentButton);
         buttonPanel.add(viewAppointmentsButton);
         buttonPanel.add(cancelAppointmentButton);
-        buttonPanel.add(exitButton);
+        buttonPanel.add(returnToAppointmentMenuButton);
 
         patientFrame.add(titleLabel, BorderLayout.NORTH);
         patientFrame.add(buttonPanel, BorderLayout.CENTER);
@@ -500,7 +593,14 @@ class Appointment {
         JButton doctorDashboardButton = new JButton("Doctor Dashboard");
         JButton exitButton = new JButton("Exit");
 
-        patientDashboardButton.addActionListener(e -> patientDashboard());
+        patientDashboardButton.addActionListener(e -> {
+            appointmentFrame.dispose();
+            patientDashboard();
+        });
+        doctorDashboardButton.addActionListener(e -> {
+            appointmentFrame.dispose();
+            doctorDashboard();
+        });
         exitButton.addActionListener(e -> {
             appointmentFrame.dispose();
             Dashboard.open();
