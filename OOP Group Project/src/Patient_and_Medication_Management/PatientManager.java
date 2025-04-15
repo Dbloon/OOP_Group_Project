@@ -17,6 +17,14 @@ public class PatientManager {
         JLabel titleLabel = new JLabel("Manage Patient Records", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 18));
 
+        JPanel buttonPanel = getJPanel(frame);
+
+        frame.add(titleLabel, BorderLayout.NORTH);
+        frame.add(buttonPanel, BorderLayout.CENTER);
+        frame.setVisible(true);
+    }
+
+    private static JPanel getJPanel(JFrame frame) {
         JPanel buttonPanel = new JPanel(new GridLayout(2, 1, 10, 10));
 
         JButton viewRecordsButton = new JButton("View Patient Records");
@@ -34,10 +42,7 @@ public class PatientManager {
         buttonPanel.add(viewRecordsButton);
         buttonPanel.add(enterDataButton);
         buttonPanel.add(exitButton);
-
-        frame.add(titleLabel, BorderLayout.NORTH);
-        frame.add(buttonPanel, BorderLayout.CENTER);
-        frame.setVisible(true);
+        return buttonPanel;
     }
 
     private static void viewPatientRecords() {
