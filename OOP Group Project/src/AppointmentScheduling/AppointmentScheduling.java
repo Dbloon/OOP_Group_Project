@@ -162,72 +162,92 @@ class Appointment {
     }
 
     public void setAppointment() {
-        int startTime=0, endTime=0;
-        Scanner scan = new Scanner(System.in);
-        viewAppointments();
-        RandomAccessFile pen = null;
-        int apptNumber=0;
-        int slot=0;
+        JFrame frame = new JFrame("Set Appointment");
+        frame.setSize(500, 300);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLayout(new BorderLayout());
 
-        try {
-            pen = new RandomAccessFile("appointment_times.txt", "rw");
+        JPanel inputPanel = new JPanel();
+        JLabel label = new JLabel("Enter Appointment Number:");
+        JTextField appointmentNumberField = new JTextField(10);
+        JButton submitButton = new JButton("Schedule");
 
-            do {
-                System.out.println("Enter appointment number: ");
-                slot = scan.nextInt();
+        inputPanel.add(label);
+        inputPanel.add(appointmentNumberField);
+        inputPanel.add(submitButton);
+
+        JTextArea statusArea = new JTextArea();
+        statusArea.setEditable(false);
+
+        submitButton.addActionListener(e -> {
+            int slot;
+            try {
+                slot = Integer.parseInt(appointmentNumberField.getText());
+                RandomAccessFile pen = new RandomAccessFile("appointment_times.txt", "rw");
                 pen.seek((long) (slot - 1) * recordSize);
-                apptNumber = pen.readInt();
+                int apptNumber = pen.readInt();
                 pen.seek(5 + (long) (slot - 1) * recordSize);
                 char[] stat = new char[statusSize];
+
                 for (int i = 0; i < statusSize; i++) {
                     stat[i] = pen.readChar();
                 }
+
                 String statusFromFile = new String(stat);
                 if (slot == apptNumber && statusFromFile.trim().equals(" ")) {
-                    System.out.println("AppointmentScheduling.Appointment Scheduled Successfully");
+                    statusArea.setText("Appointment Scheduled Successfully!\n");
+
                     pen.seek((long) (slot - 1) * recordSize);
                     setAppointmentNumber(pen.readInt());
                     pen.writeInt(getPatientNumber());
+
                     pen.seek(4 + (long) (slot - 1) * recordSize);
-                    char[] dateChars = new char[dateSize]; // "DD-MM-YYYY" is 10 characters long
+                    char[] dateChars = new char[dateSize]; //DD-MM-YYYY
                     for (int i = 0; i < dateSize; i++) {
                         dateChars[i] = pen.readChar();
-                    } 
+                    }
                     String[] dateParts = new String(dateChars).split("-");
                     int day = Integer.parseInt(dateParts[0]);
                     int month = Integer.parseInt(dateParts[1]);
                     int year = Integer.parseInt(dateParts[2]);
-                    Date appointmentDate= new Date(day, month, year);
-                    setAppointmentDate(appointmentDate);
-                    String stat1="Scheduled";
 
-                    pen.writeChars(stat1);
+                    Date appointmentDate = new Date(day, month, year);
+                    setAppointmentDate(appointmentDate);
                     setStatus("Scheduled");
-                    startTime = pen.readInt();
-                    endTime = pen.readInt();
+
+                    pen.writeChars("Scheduled");
+
+                    int startTime = pen.readInt();
+                    int endTime = pen.readInt();
+                    statusArea.append("Time: " + startTime + " - " + endTime + "\n");
+
                     Appointment appointment = new Appointment();
                     appointment.displayAppointment();
-
                 } else {
-                    System.out.println("Not a valid appointment number");
+                    statusArea.setText("Not a valid appointment number.");
                 }
 
-            } while (apptNumber != slot);
-            pen = new RandomAccessFile("setAppointments.txt", "rw");
-            pen.seek((getPatientNumber() - 1) * 68L);
-            pen.writeInt(getAppointmentNumber()); // 4 bytes
-            pen.writeInt(getPatientNumber());// 4 bytes
-            pen.writeInt(getDoctorNumber());// 4 bytes
-            pen.writeChars(getAppointmentDate().toString());// 10 bytes
-            pen.writeChars(getStatus());// 18 bytes
-            pen.writeInt(startTime);// 4 bytes
-            pen.writeInt(endTime);// 4 bytes
-            pen.close();
+                pen.close();
+            } catch (Exception ex) {
+                statusArea.setText("An error occurred while scheduling the appointment.");
+            }
+        });
+/*
+        RandomAccessFile pen = new RandomAccessFile("setAppointments.txt", "rw");
+        pen.seek((getPatientNumber() - 1) * 68L);
+        pen.writeInt(getAppointmentNumber()); // 4 bytes
+        pen.writeInt(getPatientNumber());// 4 bytes
+        pen.writeInt(getDoctorNumber());// 4 bytes
+        pen.writeChars(getAppointmentDate().toString());// 10 bytes
+        pen.writeChars(getStatus());// 18 bytes
+        pen.writeInt(startTime);// 4 bytes
+        pen.writeInt(endTime);// 4 bytes
+        pen.close(); */
 
-        } catch (Exception e) {
-            System.out.println(e);
-        }
 
+        frame.add(inputPanel, BorderLayout.NORTH);
+        frame.add(new JScrollPane(statusArea), BorderLayout.CENTER);
+        frame.setVisible(true);
     }
 
     public void modifyAppointment(char choice) {
