@@ -3,7 +3,7 @@ package Dashboardpak;
 import Main.MWMS;
 import Login_and_Authentication.SessionManager;
 import Login_and_Authentication.User;
-import Patient_and_Medication_Management.Prescription_and_Medication;
+import Patient_and_Medication_Management.MainDashboard;
 import Staff_Record_Management.EmployeeInfo;
 import Staff_Record_Management.ManageUsers;
 import Visit_Referral_Management.AddVisit;
@@ -62,7 +62,7 @@ public class Dashboard {
         JButton ManageMedication = new JButton("Manage Medication");
         ManageMedication.addActionListener(e ->{
             dashboardFrame.setVisible(false);
-            Prescription_and_Medication.MedicalHistory();
+            MainDashboard.main(null);
         });
 
         // Role-Based Options

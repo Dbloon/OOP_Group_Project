@@ -100,21 +100,6 @@ public class Prescription {
 		frame.add(saveButton, BorderLayout.SOUTH);
 		frame.setVisible(true);
 	}
-	/*public void medicationHistory() {
-	    try {
-	        RandomAccessFile OUT = new RandomAccessFile("MedicationHistory.txt", "rw");
-	        
-	        OUT.seek(OUT.length());
-
-	        OUT.writeInt(patientNumber);
-	        OUT.writeUTF(medication);
-	        OUT.writeUTF(prescriptionDate);
-
-	        OUT.close();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}*/
 
 	public void viewMedicationHistory(int searchPatientNumber) {
 		JFrame frame = new JFrame("Medication History Viewer");
@@ -156,28 +141,6 @@ public class Prescription {
 		frame.add(scrollPane, BorderLayout.CENTER);
 		frame.setVisible(true);
 	}
-	/*public void viewMedicationHistory(int searchPatientNumber) {
-	    try {
-	        RandomAccessFile OUT = new RandomAccessFile("MedicationHistory.txt", "r");
-
-	        while (OUT.getFilePointer() < OUT.length()) {
-	            int storedID = OUT.readInt();
-	            String med = OUT.readUTF();
-	            String date = OUT.readUTF();
-
-	            if (storedID == searchPatientNumber) {
-	                System.out.println("Medication: " + med);
-	                System.out.println("Date: " + date);
-	                System.out.println("-----------------------");
-	            }
-	        }
-	        
-	       
-	        OUT.close();
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}*/
 
 	public void initiallizePrescription() {
 		JFrame frame = new JFrame("Initialize Prescriptions");
@@ -228,28 +191,6 @@ public class Prescription {
 		frame.add(initializeButton, BorderLayout.SOUTH);
 		frame.setVisible(true);
 	}
-	/*public void initiallizeprescription() {
-		
-		try {
-			RandomAccessFile OUT = new RandomAccessFile("Prescriptions.txt", "rw");
-			
-			for(int i = 0; i < numberOfRecords; i++) {
-				
-				OUT.writeInt(0);
-				OUT.writeInt(0);
-				OUT.writeUTF(" Unknown ");
-				OUT.writeUTF(lName);
-				OUT.writeUTF("Nothing");
-				OUT.writeInt(refills);
-				OUT.writeDouble(0.0);
-				OUT.writeUTF(" Unknown");
-			}
-			
-			OUT.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
 
 	public void enterPrescription() {
 		JFrame frame = new JFrame("Enter Prescription");
@@ -274,6 +215,7 @@ public class Prescription {
 		JTextField dosageField = new JTextField();
 
 		JButton saveButton = new JButton("Save Prescription");
+		JButton returnToMenuButton = new JButton("Return to Menu");
 
 		inputPanel.add(patientIdLabel);
 		inputPanel.add(patientIdField);
@@ -295,6 +237,15 @@ public class Prescription {
 
 		saveButton.addActionListener(e -> {
 			try {
+				// Input validation
+				if (patientIdField.getText().isEmpty() || doctorIdField.getText().isEmpty() ||
+						doctorLastNameField.getText().isEmpty() || medicationField.getText().isEmpty() ||
+						instructionsField.getText().isEmpty() || refillsField.getText().isEmpty() ||
+						dosageField.getText().isEmpty()) {
+					statusArea.setText("All fields are required. Please fill them out.");
+					return;
+				}
+
 				int patientNumber = Integer.parseInt(patientIdField.getText());
 				int doctorNumber = Integer.parseInt(doctorIdField.getText());
 				String lName = doctorLastNameField.getText();
@@ -318,129 +269,40 @@ public class Prescription {
 				OUT.close();
 
 				statusArea.setText("Prescription saved successfully for Patient ID#: " + patientNumber);
+
+				// Prompt user to enter another prescription
+				int option = JOptionPane.showConfirmDialog(
+						saveButton.getParent(),
+						"Do you want to enter another prescription?",
+						"Continue?",
+						JOptionPane.YES_NO_OPTION
+				);
+
+				if (option == JOptionPane.YES_OPTION) {
+					JFrame currentFrame = (JFrame) SwingUtilities.getWindowAncestor(saveButton);
+					currentFrame.dispose(); // Close current frame
+
+					Prescription prescription = new Prescription();
+					prescription.enterPrescription(); // Open new instance of the same frame
+				}
+
 			} catch (NumberFormatException ex) {
 				statusArea.setText("Invalid input! Please ensure all numeric fields are correct.");
 			} catch (IOException ex) {
 				statusArea.setText("An error occurred while saving the prescription.");
 			}
 		});
+		returnToMenuButton.addActionListener(e -> {
+			frame.setVisible(false);
+			MainDashboard.main(null);
+		});
 
 		frame.add(inputPanel, BorderLayout.NORTH);
 		frame.add(new JScrollPane(statusArea), BorderLayout.CENTER);
-		frame.add(saveButton, BorderLayout.SOUTH);
+		frame.add(saveButton,BorderLayout.WEST);
+		frame.add(returnToMenuButton,BorderLayout.EAST);
 		frame.setVisible(true);
 	}
-	/*public void enterPrescription() {
-		String TEMP = " ";
-		
-		try {
-			RandomAccessFile OUT = new RandomAccessFile("Prescriptions.txt", "rw");
-			
-			System.out.print("Patient ID#: ");			
-			try {
-				patientNumber = Integer.parseInt(INPUT.nextLine());
-			} catch (NumberFormatException e) {				
-				e.printStackTrace();
-			}
-			
-			try {
-				System.out.print("Doctor ID#: ");
-				doctorNumber = Integer.parseInt(INPUT.nextLine());
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}	
-			
-			
-			System.out.print("Doctors Last name: ");
-			TEMP = INPUT.nextLine();
-			
-			if (TEMP.length() > lName.length()) {
-				lName = TEMP.substring(0,15);
-			}else if(TEMP.length() < lName.length()) {
-				int DIFFERENCE = lName.length() - TEMP.length();
-				
-				for (int x = 0; x < DIFFERENCE; x++) {
-					TEMP = TEMP + " ";
-					
-					lName = TEMP;
-				}
-			}
-			else {
-				lName = TEMP;
-			}
-			
-			
-			System.out.print("Medication: ");
-			TEMP = INPUT.nextLine();
-			
-			if (TEMP.length() > medication.length()) {
-				medication = TEMP.substring(0,10);
-			}else if(TEMP.length() < medication.length()) {
-				int DIFFERENCE = medication.length() - TEMP.length();
-				
-				for (int x = 0; x < DIFFERENCE; x++) {
-					TEMP = TEMP + " ";
-					
-					medication = TEMP;
-				}
-			}
-			else {
-				medication = TEMP;
-			}
-			
-			
-			System.out.print("Instructions: ");
-			TEMP = INPUT.nextLine();
-			
-			if (TEMP.length() > 60) {
-				instructions = TEMP.substring(0,60);
-			}else if(TEMP.length() < instructions.length()) {
-				instructions = String.format("%-60s", TEMP);
-			}
-			else {
-				instructions = TEMP;
-			}
-			
-			
-			try {
-				System.out.print("Refills: ");
-				refills = Integer.parseInt(INPUT.nextLine());
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-			
-			
-			try {
-				System.out.print("Dosage: ");
-				dosage = Double.parseDouble(INPUT.nextLine());
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-			
-			prescriptionDate = currentDay.toString();
-
-			
-			filePointerPosition = patientNumber - 1;
-			OUT.seek((long) filePointerPosition * sizeOfRecord);
-			
-			OUT.writeInt(patientNumber);
-			OUT.writeInt(doctorNumber);
-			OUT.writeUTF(lName);
-			OUT.writeUTF(medication);
-			OUT.writeUTF(instructions);
-			OUT.writeInt(refills);
-			OUT.writeDouble(dosage);
-			OUT.writeUTF(prescriptionDate);			
-			
-			OUT.close();
-		    medicationStock.prescribeMedication(); 
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}*/
 
 	public void displayPrescriptions(int pid) {
 		JFrame frame = new JFrame("View Prescription Details");
@@ -487,35 +349,7 @@ public class Prescription {
 		frame.add(scrollPane, BorderLayout.CENTER);
 		frame.setVisible(true);
 	}
-	/*public void displayPrescriptoins(int pid) {
-		
-		try {
-			RandomAccessFile OUT = new RandomAccessFile("Prescriptions.txt", "r");
-			
-			
-			filePointerPosition = pid - 1;
-			OUT.seek((long) filePointerPosition * sizeOfRecord);
-			
-			patientNumber = OUT.readInt();
-			doctorNumber = OUT.readInt();
-			lName = OUT.readUTF();
-			medication = OUT.readUTF();
-			instructions = OUT.readUTF();
-			refills = OUT.readInt();
-			dosage = OUT.readDouble();
-			prescriptionDate = OUT.readUTF();
-			
-			display();
-			OUT.close();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}*/
-	
 
-	
 	void display() {
 		System.out.println("\n\tPrescriptions\n" + "Date: " +prescriptionDate+ "\n\nRx:\n\tPrescription: " +medication+ 
 							"\n\tDosage: " +dosage+ "mg");
@@ -523,7 +357,6 @@ public class Prescription {
 		System.out.println("\nPrescribing Doctor: Dr." +lName+
 							"\nLicense# " +doctorNumber);
 	}	
-
 
 	public int getPatientNumber() { return patientNumber; }
 	public void setPatientNumber(int patientNumber) { this.patientNumber = patientNumber; }
@@ -539,6 +372,4 @@ public class Prescription {
 
 	public String getPrescriptionDate() { return prescriptionDate; }
 	public void setPrescriptionDate(String prescriptionDate) { this.prescriptionDate = prescriptionDate; }
-
-	
 }

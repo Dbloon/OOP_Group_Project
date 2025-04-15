@@ -34,7 +34,6 @@ public class Prescription_and_Medication {
 			try {
 				int patientID = Integer.parseInt(patientIdField.getText());
 				Prescription precs = new Prescription();
-				//precs.medicationHistory();
 				precs.viewMedicationHistory(patientID);
 				outputArea.setText("Displaying medication history for Patient ID: " + patientID);
 			} catch (NumberFormatException ex) {
