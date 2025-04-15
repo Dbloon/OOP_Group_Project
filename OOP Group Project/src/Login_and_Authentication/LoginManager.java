@@ -19,8 +19,7 @@ public class LoginManager {
                 username = raf.readUTF().trim();
                 password = raf.readUTF().trim();
                 role = raf.readUTF().trim();
-                failedAttempt = raf.readInt();
-                isLocked = raf.readBoolean();
+                
 
                 if (username.equals(inputUsername)){
                     if(isLocked){

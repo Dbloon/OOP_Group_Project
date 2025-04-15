@@ -49,8 +49,8 @@ public class MWMS {
             String username = usernameField.getText().trim();
             String password = String.valueOf(passwordField.getPassword()).trim();
 
-            //User user = LoginManager.authenticate("Daren", "bryan");
-            User user = LoginManager.authenticate(username,password,failedAttempts);
+            User user = LoginManager.authenticate("Joshua", "kal",failedAttempts);
+            //User user = LoginManager.authenticate(username,password,failedAttempts);
 
             if (user != null) {
                 JOptionPane.showMessageDialog(loginFrame, "Welcome " + user.getUsername() + "!");

@@ -4,6 +4,7 @@ import java.io.RandomAccessFile;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 import java.util.Scanner;
+import Visit_Referral_Management.Date;
 
 class Appointment {
     Scanner scanner = new Scanner(System.in);
@@ -23,7 +24,7 @@ class Appointment {
         this.appointmentNumber = 0; // 4 bytes
         this.patientNumber = 0;// 4 bytes
         this.doctorNumber = 0; // 4 bytes
-        this.appointmentDate = new Date(1,0,0000); // assuming format is yyyy-MM-dd 10 char bytes
+        this.appointmentDate = new Date(1,0, 0); // assuming format is yyyy-MM-dd 10 char bytes
         this.status = String.format("%-9s", " ").substring(0, 9);// 18 bytes
                                                                   // start time int 4 bytes
                                                                   // end time int 4 bytes
@@ -92,7 +93,7 @@ class Appointment {
         RandomAccessFile pen = null;
         try {
             pen = new RandomAccessFile("appointment_times.txt", "rw");
-            pen.seek(6 + (getPatientNumber() - 1) * recordSize);
+            pen.seek(6 + (long) (getPatientNumber() - 1) * recordSize);
             int startTime = pen.readInt();
             int endTime = pen.readInt();
             if (startTime == 0 && endTime == 0) {
@@ -107,12 +108,8 @@ class Appointment {
                 System.out.println("-------------------------");
             }
             pen.close();
-        } catch (FileNotFoundException e) {
-            System.out.println(e);
-        } catch (IOException e) {
-            System.out.println(e);
-        }catch (Exception e) {
-            System.out.println(e);
+        } catch (Exception e) {
+            System.out.println("An Exception occured");
         }
     }
 
@@ -158,9 +155,9 @@ class Appointment {
             do {
                 System.out.println("Enter appointment number: ");
                 slot = scan.nextInt();
-                pen.seek((slot - 1) * recordSize);
+                pen.seek((long) (slot - 1) * recordSize);
                 apptNumber = pen.readInt();
-                pen.seek(5 + (slot - 1) * recordSize);
+                pen.seek(5 + (long) (slot - 1) * recordSize);
                 char[] stat = new char[statusSize];
                 for (int i = 0; i < statusSize; i++) {
                     stat[i] = pen.readChar();
@@ -168,10 +165,10 @@ class Appointment {
                 String statusFromFile = new String(stat);
                 if (slot == apptNumber && statusFromFile.trim().equals(" ")) {
                     System.out.println("Appointment Scheduled Successfully");
-                    pen.seek((slot - 1) * recordSize);
+                    pen.seek((long) (slot - 1) * recordSize);
                     setAppointmentNumber(pen.readInt());
                     pen.writeInt(getPatientNumber());
-                    pen.seek(4 + (slot - 1) * recordSize);
+                    pen.seek(4 + (long) (slot - 1) * recordSize);
                     char[] dateChars = new char[dateSize]; // "DD-MM-YYYY" is 10 characters long
                     for (int i = 0; i < dateSize; i++) {
                         dateChars[i] = pen.readChar();
@@ -197,7 +194,7 @@ class Appointment {
 
             } while (apptNumber != slot);
             pen = new RandomAccessFile("setAppointments.txt", "rw");
-            pen.seek((getPatientNumber() - 1) * 68);
+            pen.seek((getPatientNumber() - 1) * 68L);
             pen.writeInt(getAppointmentNumber()); // 4 bytes
             pen.writeInt(getPatientNumber());// 4 bytes
             pen.writeInt(getDoctorNumber());// 4 bytes
@@ -207,8 +204,6 @@ class Appointment {
             pen.writeInt(endTime);// 4 bytes
             pen.close();
 
-        } catch (IOException e) {
-            System.out.println(e);
         } catch (Exception e) {
             System.out.println(e);
         }
@@ -234,22 +229,22 @@ class Appointment {
                     apptNumber = scanner.nextInt();
                     setStatus("Cancelled");
                 }
-                pen.seek((apptNumber - 1) * recordSize);
+                pen.seek((long) (apptNumber - 1) * recordSize);
                 if (pen.readInt() == apptNumber) {
                     found = true;
                 } else {
                     System.out.println("No appointment found");
                 }
-            } while (found == false);
+            } while (found == false);//can be simplified
 
             if (choice == 'U') {
                 System.out.println("updating appointment status");
-                pen.seek(5 + (getAppointmentNumber() - 1) * recordSize);
+                pen.seek(5 + (long) (getAppointmentNumber() - 1) * recordSize);
                 setStatus(String.format("%-9s", newStatus));
                 pen.writeChars(newStatus);
             }
             if (choice == 'C') {
-                pen.seek(5 + (getAppointmentNumber() - 1) * recordSize);
+                pen.seek(5 + (long) (getAppointmentNumber() - 1) * recordSize);
                 System.out.println("cancelling appointment");
                 setStatus("Cancelled");
                 pen.writeChars(" ");
@@ -262,7 +257,7 @@ class Appointment {
     }
 
     public void doctorDashboard() {
-        while (true) {
+        while (true) { // needs to throw exception
             System.out.println("\nDoctor Dashboard");
             System.out.println("1. Generate Appointment Times");
             System.out.println("2. Manage Appointments");
