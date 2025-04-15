@@ -1,5 +1,7 @@
 package Patient_and_Medication_Management;
 
+import Dashboardpak.Dashboard;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -28,6 +30,15 @@ public class PrescriptionManager {
         JScrollPane tableScrollPane = new JScrollPane(prescriptionTable);
 
         // Buttons for add, edit, delete
+        JPanel buttonPanel = getJPanel(tableModel, prescriptionTable,frame);
+
+        frame.add(titleLabel, BorderLayout.NORTH);
+        frame.add(tableScrollPane, BorderLayout.CENTER);
+        frame.add(buttonPanel, BorderLayout.SOUTH);
+        frame.setVisible(true);
+    }
+
+    private static JPanel getJPanel(DefaultTableModel tableModel, JTable prescriptionTable, JFrame parentframe) {
         JButton addButton = new JButton("Add");
         addButton.addActionListener(e -> addPrescription(tableModel));
 
@@ -37,15 +48,18 @@ public class PrescriptionManager {
         JButton deleteButton = new JButton("Delete");
         deleteButton.addActionListener(e -> deletePrescription(prescriptionTable, tableModel));
 
+        JButton exitButton = new JButton("Exit");
+        exitButton.addActionListener(e -> {
+            parentframe.dispose();
+            MainDashboard.main(null);
+        });
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
         buttonPanel.add(addButton);
         buttonPanel.add(editButton);
         buttonPanel.add(deleteButton);
-
-        frame.add(titleLabel, BorderLayout.NORTH);
-        frame.add(tableScrollPane, BorderLayout.CENTER);
-        frame.add(buttonPanel, BorderLayout.SOUTH);
-        frame.setVisible(true);
+        buttonPanel.add(exitButton);
+        return buttonPanel;
     }
 
     private static void loadPrescriptions(DefaultTableModel model) {

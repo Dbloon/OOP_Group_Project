@@ -1,9 +1,11 @@
 package Patient_and_Medication_Management;
 
+import Dashboardpak.Dashboard;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class Dashboard {
+public class MainDashboard {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Main Dashboard");
         frame.setSize(600, 400);
@@ -18,18 +20,23 @@ public class Dashboard {
         // Button for managing prescriptions
         JButton prescriptionButton = new JButton("Manage Prescriptions");
         prescriptionButton.addActionListener(e -> {
+            frame.setVisible(false);
             PrescriptionManager.displayPrescriptionPanel();
         });
 
         // Button for managing patient records
         JButton patientButton = new JButton("Manage Patient Records");
         patientButton.addActionListener(e -> {
+            frame.setVisible(false);
             PatientManager.managePatientRecords();
         });
 
         // Exit button
         JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(e -> System.exit(0));
+        exitButton.addActionListener(e -> {
+            frame.dispose();
+            Dashboard.open();
+        });
 
         buttonPanel.add(prescriptionButton);
         buttonPanel.add(patientButton);
