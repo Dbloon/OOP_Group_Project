@@ -61,7 +61,6 @@ public class MWMS {
                 if(failedAttempts > 3){
                     JOptionPane.showMessageDialog(loginFrame,"Account Locked, consult an Admin");
                     failedAttempts = 0;
-                    System.exit(1  );
                 }
                 JOptionPane.showMessageDialog(loginFrame, "Login Failed.", "Login Failed", JOptionPane.ERROR_MESSAGE);
             }
