@@ -28,7 +28,7 @@ public class ManageUsers {
         addEmployees.setAlignmentX(Component.CENTER_ALIGNMENT);
         addEmployees.addActionListener(e -> {
             MUframe.dispose();
-            EmployeeInfo.add();
+            EmployeeInfo.addEmployeeProfile();
         });
         buttonPanel.add(addEmployees);
         buttonPanel.add(Box.createVerticalStrut(10));

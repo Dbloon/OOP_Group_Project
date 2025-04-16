@@ -19,6 +19,8 @@ public class EmployeeInfo {
     private final String JobT;
     private final String supervisor;
 
+    public static int sizeOfRecord = 1024;
+
     public EmployeeInfo(int ID, int trn, String fname, String midname, String lname, String DOE, String Department, String Gender, String JobT, String supervisor) {
         this.ID = ID;
         this.trn = trn;
@@ -183,7 +185,7 @@ public class EmployeeInfo {
         });
     }
 
-    public static void add(){
+    public static void addEmployeeProfile(){
         JFrame Emp = new JFrame("Employee Entry");
         Emp.setSize(400,600);
         Emp.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -255,16 +257,54 @@ public class EmployeeInfo {
         Emp.setVisible(true);
     }
 
-    public static void addEmployee(String firstname,String password, String role) {
+    public static void addEmployee(int id, String firstname, String Password, String role, int fa, boolean isLocked) {
         String filePath = "Employees.dat";
 
         try (RandomAccessFile raf = new RandomAccessFile(filePath, "rw")) {
-            raf.seek(raf.length()); // Move to the end of the file
+            // Ensure file isn't shorter than where we're about to write
+            if ((long) ( - 1) * sizeOfRecord >= raf.length()) {
+                raf.seek(raf.length()); // Append at end if record position doesn't exist
+            } else {
+                raf.seek((long) (id - 1) * sizeOfRecord); // Jump to correct position
+            }
+
+            // Writing structured data
+            raf.writeInt(id);
             raf.writeUTF(firstname);
-            raf.writeUTF(password);
+            raf.writeUTF(Password);
             raf.writeUTF(role);
+            raf.writeInt(fa);
+            raf.writeBoolean(isLocked);
+
+            System.out.println("Employee added successfully!");
+
         } catch (IOException e) {
             System.err.println("Error writing to file: " + e.getMessage());
+        }
+    }
+    public static void readRaf(int id) {
+        String filePath = "Employees.dat";
+
+        try (RandomAccessFile raf = new RandomAccessFile(filePath, "r")) {
+            // Validate ID before seeking
+            if ((long) (id - 1) * sizeOfRecord >= raf.length()) {
+                System.out.println("Invalid ID: Record does not exist.");
+                return;
+            }
+
+            raf.seek((long) (id - 1) * sizeOfRecord);
+
+            // Read data safely
+            int ID = raf.readInt();
+            String fname = raf.readUTF();
+            String password = raf.readUTF();
+            String role = raf.readUTF();
+            int fa = raf.readInt();
+            boolean islocked = raf.readBoolean();
+
+            System.out.println(fname + " " + password + " " + role);
+        } catch (IOException e) {
+            System.err.println("File read error: " + e.getMessage());
         }
     }
 
@@ -287,13 +327,13 @@ public class EmployeeInfo {
             if (!name.isEmpty()) {
                 int confirm = JOptionPane.showConfirmDialog(
                         frame,
-                        "Are you sure you want to remove '" + name + "'?",
+                        "Are you sure you want to removeEmployeprofile '" + name + "'?",
                         "Confirm Deletion",
                         JOptionPane.YES_NO_OPTION
                 );
 
                 if (confirm == JOptionPane.YES_OPTION) {
-                    boolean success = remove(name);
+                    boolean success = removeEmployeprofile(name);
                     if (success) {
                         feedbackLabel.setText("Employee '" + name + "' removed successfully.");
                     } else {
@@ -314,7 +354,7 @@ public class EmployeeInfo {
         frame.setVisible(true);
     }
 
-    public static boolean remove(String targetName) {
+    public static boolean removeEmployeprofile(String targetName) {
         String filePath = "EmployeeProfiles.txt";
         File inputFile = new File(filePath);
         File tempFile = new File("temp_" + filePath);
@@ -350,7 +390,8 @@ public class EmployeeInfo {
     }
 
     public static void main(String[] args){
-        addEmployee("Joshua","kal","doctor");
+        addEmployee(1,"Daren","bryan","admin",0,false);
+        readRaf(1);
     }
 }
 
