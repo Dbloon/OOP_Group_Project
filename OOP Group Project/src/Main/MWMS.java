@@ -32,9 +32,9 @@ public class MWMS {
 
         panel.add(new JLabel("Username:"));
         panel.add(usernameField);
-        panel.add(Box.createHorizontalStrut(68)); // Adds 10px horizontal space
+        panel.add(Box.createHorizontalStrut(68));
 
-        panel.add(Box.createVerticalStrut(10)); //Adds 10px vertical space
+        panel.add(Box.createVerticalStrut(10));
         panel.add(new JLabel("Password:"));
         panel.add(passwordField);
 

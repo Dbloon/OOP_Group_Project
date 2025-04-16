@@ -214,32 +214,7 @@ public class PatientRecords {
 		frame.add(scrollPane, BorderLayout.CENTER);
 		frame.setVisible(true);
 	}
-	/*public void displayRecords(int pid) {
 
-		try {
-			RandomAccessFile OUT = new RandomAccessFile("PatientData.txt", "r");
-
-
-			filePointerPosition = pid - 1;
-			OUT.seek((long) filePointerPosition * sizeOfRecord);
-
-			patientNumber = OUT.readInt();
-			patientName = OUT.readUTF();
-			patientDob = OUT.readUTF();
-			gender = OUT.readUTF();
-			phoneNumber = OUT.readInt();
-			address = OUT.readUTF();
-
-			display();
-			OUT.close();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-
-	}*/
 
 	void display() {
 		System.out.println("\tPatientRecords \n"

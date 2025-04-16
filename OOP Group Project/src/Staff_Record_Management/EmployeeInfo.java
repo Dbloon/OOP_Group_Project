@@ -19,7 +19,7 @@ public class EmployeeInfo {
     private final String JobT;
     private final String supervisor;
 
-    public static int sizeOfRecord = 1024;
+    public static int sizeOfRecord = 64;
 
     public EmployeeInfo(int ID, int trn, String fname, String midname, String lname, String DOE, String Department, String Gender, String JobT, String supervisor) {
         this.ID = ID;
