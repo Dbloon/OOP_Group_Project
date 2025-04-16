@@ -1,5 +1,7 @@
 package Visit_Referral_Management;
 
+import Dashboardpak.Dashboard;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -64,7 +66,7 @@ public class AddVisit {
 
 
             JButton submitButton = new JButton("Add Visit");
-            submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+            submitButton.setAlignmentX(Component.LEFT_ALIGNMENT);
             submitButton.addActionListener(e -> {
                 try {
                     // Validate inputs
@@ -91,7 +93,15 @@ public class AddVisit {
                 }
             });
 
+            JButton returnToMenuButton = new JButton("Return to Menu");
+            returnToMenuButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+            returnToMenuButton.addActionListener(e -> {
+                frame.dispose();
+                Dashboard.open();
+            });
+
             panel.add(submitButton);
+            panel.add(returnToMenuButton);
             frame.add(panel);
             frame.setVisible(true);
         }

@@ -3,29 +3,35 @@ package Dashboardpak;
 import Main.MWMS;
 import Login_and_Authentication.SessionManager;
 import Login_and_Authentication.User;
+import Patient_and_Medication_Management.MainDashboard;
+import Patient_and_Medication_Management.PatientManager;
 import Staff_Record_Management.EmployeeInfo;
 import Staff_Record_Management.ManageUsers;
 import Visit_Referral_Management.AddVisit;
+import AppointmentScheduling.Appointment;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class Dashboard {
     public static void open() {
-        User user = SessionManager.getAuthenticatedUser(); //fetches authenticated user from Session Manager
+        // Fetch authenticated user from Session Manager
+        User user = SessionManager.getAuthenticatedUser();
         if (user == null) {
             System.out.println("No authenticated user found. Redirecting to login...");
             return; // Prevent opening dashboard without a user
         }
 
-        JFrame dashboardFrame = new JFrame("Main.MWMS Menu - " + user.getRole());
+        // Create the dashboard frame
+        JFrame dashboardFrame = new JFrame("Prescription_and_Medication.MWMS Menu - " + user.getRole());
         dashboardFrame.setSize(600, 400);
         dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        // Set up the main panel
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(0, 1)); // Single-column layout
 
-        //Buttons
+        // Buttons
         JButton manageUsers = new JButton("Manage Users");
         manageUsers.addActionListener(e -> {
             dashboardFrame.dispose();
@@ -47,7 +53,26 @@ public class Dashboard {
         JButton addVisitButton = new JButton("Add New Visit");
         addVisitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
         addVisitButton.addActionListener(e -> {
+            dashboardFrame.setVisible(false);
             AddVisit.open();
+        });
+
+        JButton AppointmentScheduling = new JButton("Appointment Scheduling");
+        AppointmentScheduling.addActionListener(e -> {
+            dashboardFrame.setVisible(false);
+            Appointment.main(null);
+        });
+
+        JButton ManageMedication = new JButton("Manage Medication");
+        ManageMedication.addActionListener(e -> {
+            dashboardFrame.setVisible(false);
+            MainDashboard.main(null);
+        });
+
+        JButton patientRecords = new JButton("View Patient Records");
+        patientRecords.addActionListener(e -> {
+            dashboardFrame.setVisible(false);
+            PatientManager.managePatientRecords();
         });
 
         // Role-Based Options
@@ -59,25 +84,25 @@ public class Dashboard {
                 break;
             case "doctor":
                 panel.add(addVisitButton);
-                panel.add(new JButton("View Appointments"));
-                panel.add(new JButton("View Patient_Management.Patient Records"));
-                panel.add(new JButton("Prescriptions"));
-                panel.add(logoutButton);;
+                panel.add(AppointmentScheduling);
+                panel.add(ManageMedication);
+                panel.add(logoutButton);
                 break;
             case "nurse":
-                panel.add(new JButton("Assist with Patient_Management.Patient Records"));
-                panel.add(new JButton("Manage Medications"));
+                panel.add(patientRecords);
+                panel.add(ManageMedication);
                 panel.add(logoutButton);
                 break;
             case "patient":
                 panel.add(new JButton("View Medical History"));
-                panel.add(new JButton("Book Appointment"));
+                panel.add(AppointmentScheduling);
                 panel.add(logoutButton);
                 break;
             default:
                 panel.add(new JLabel("No specific options available for this role."));
         }
 
+        // Add panel to frame and make it visible
         dashboardFrame.add(panel);
         dashboardFrame.setVisible(true);
     }
